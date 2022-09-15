@@ -17,6 +17,11 @@ xsymbol = pygame.image.load('tictactoeX.png')
 running = True
 
 # The 3 activespots lists. The activespots is activespotso and activespotsx comebined.
+# The first list (of all total active spots) just contains each spot that has already been loaded, so if you click where
+# a spot is already loaded it won't do a repeat of the load function as the spot is already in the active list.
+# The 2 other activespots list are the actual lists used for loading, not just making sure there isn't a repeat.
+# The 2 lists are seperated with x and o as the ladder of having the alternating symbols within one list is just
+# more messy and probably harder to implement.
 activespots = []
 activespotso = []
 activespotsx = []
