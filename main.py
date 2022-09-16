@@ -12,23 +12,27 @@ pygame.display.set_icon(icon)
 background = pygame.image.load('tictactoebackground.png')
 osymbol = pygame.image.load('tictactoeO.png')
 xsymbol = pygame.image.load('tictactoeX.png')
+restartbutton = pygame.image.load('restartbutton.png')
 
 # Main game loop requirement.
 running = True
 
-# The 3 activespots lists. The activespots is activespotso and activespotsx comebined.
-# The first list (of all total active spots) just contains each spot that has already been loaded, so if you click where
-# a spot is already loaded it won't do a repeat of the load function as the spot is already in the active list.
-# The 2 other activespots list are the actual lists used for loading, not just making sure there isn't a repeat.
-# The 2 lists are seperated with x and o as the ladder of having the alternating symbols within one list is just
-# more messy and probably harder to implement.
+# The 3 activespots lists. The activespots is activespotso and activespotsx combined.
 activespots = []
 activespotso = []
 activespotsx = []
 
+# This is just a starting statement so the restart button is not there when activated.
+restartbuttonactive = False
+
+# Font for future text.
+font = pygame.font.Font('freesansbold.ttf', 32)
+
 # When a click is in a valid area, and games checks if to add it to a loaded spot if it isn't already loaded.
 # It will also have an alternation symbol so new spots alternate between being an o or and x.
 alternationnum = 1
+
+
 def addactivespot(spotnum):
     if spotnum not in activespots:
         activespots.append(spotnum)
@@ -38,6 +42,7 @@ def addactivespot(spotnum):
         else:
             activespotsx.append(spotnum)
         alternationnum += 1
+
 
 # Big If/Elif checklist to check if a team has gotten 3 in a row.
 def checkifwon(activechecklist):
@@ -61,13 +66,22 @@ def checkifwon(activechecklist):
         if 3 in activechecklist and 6 in activechecklist:
             someonewon(activechecklist)
 
-# Function if someone has won. Currently ends the game/program.
+
+# Function if someone has won, and currently assigns the 'valueforwhowontext' variable for then printing in the GUI
+# of who won the game.
 def someonewon(sidethatwon):
+    global valueforwhowontext
+    global restartbuttonactive
+
     if sidethatwon == activespotso:
-        print('O is the winner!')
+        valueforwhowontext = True
     else:
-        print('X is the winner!')
-    exit()
+        valueforwhowontext = False
+
+    # This true statement activates the loading of the restart button, and the click checks for it.
+    # It also cancels the click checks for the spots, so you can't just keep playing.
+    restartbuttonactive = True
+
 
 # NOTE: This is the grid for num in list compared to tile for visual use:
 #   1 4 7
@@ -80,49 +94,73 @@ while running:
             running = False
     # Event for what happens with mouse down clicked.
     if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+
         mouseposition = pygame.mouse.get_pos()
         posx = mouseposition[0]
         posy = mouseposition[1]
-        # Here checks is the click is within one of the 9 areas for where an x or o can be.
-        if 316 > posx > 196 and 216 > posy > 96:  # Top Left
-            # print('Top Left')
-            addactivespot(1)
+        # There is an alternation system here; if the game is in progress, the game only checks for clicks at spots,
+        # not at where the restart button would be. However, if the game ended (someone won) it swaps, and it will then
+        # only check for clicks at the now loaded restart button and not at any of the spots.
+        if restartbuttonactive == False:
+            # Here checks is the click is within one of the 9 areas for where an x or o can be.
+            if 316 > posx > 196 and 216 > posy > 96:  # Top Left
+                # print('Top Left')
+                addactivespot(1)
 
-        if 316 > posx > 196 and 360 > posy > 240:  # Left Edge
-            # print('Left Edge')
-            addactivespot(2)
+            if 316 > posx > 196 and 360 > posy > 240:  # Left Edge
+                # print('Left Edge')
+                addactivespot(2)
 
-        if 316 > posx > 196 and 504 > posy > 384:  # Bottom Left
-            # print('Bottom Left')
-            addactivespot(3)
+            if 316 > posx > 196 and 504 > posy > 384:  # Bottom Left
+                # print('Bottom Left')
+                addactivespot(3)
 
-        if 460 > posx > 340 and 216 > posy > 96:  # Top Edge
-            # print('Top Edge')
-            addactivespot(4)
+            if 460 > posx > 340 and 216 > posy > 96:  # Top Edge
+                # print('Top Edge')
+                addactivespot(4)
 
-        if 460 > posx > 340 and 360 > posy > 240:  # Center
-            # print('Center')
-            addactivespot(5)
+            if 460 > posx > 340 and 360 > posy > 240:  # Center
+                # print('Center')
+                addactivespot(5)
 
-        if 460 > posx > 340 and 504 > posy > 384:  # Bottom Edge
-            # print('Bottom Edge')
-            addactivespot(6)
+            if 460 > posx > 340 and 504 > posy > 384:  # Bottom Edge
+                # print('Bottom Edge')
+                addactivespot(6)
 
-        if 604 > posx > 484 and 216 > posy > 96:  # Top Right
-            # print('Top Right')
-            addactivespot(7)
+            if 604 > posx > 484 and 216 > posy > 96:  # Top Right
+                # print('Top Right')
+                addactivespot(7)
 
-        if 604 > posx > 484 and 360 > posy > 240:  # Right Edge
-            # print('Right Edge')
-            addactivespot(8)
+            if 604 > posx > 484 and 360 > posy > 240:  # Right Edge
+                # print('Right Edge')
+                addactivespot(8)
 
-        if 604 > posx > 484 and 504 > posy > 384:  # Bottom Right
-            # print('Bottom Right')
-            addactivespot(9)
+            if 604 > posx > 484 and 504 > posy > 384:  # Bottom Right
+                # print('Bottom Right')
+                addactivespot(9)
+        else:
+            if 178 > posx > 50 and 180 > posy > 100:  # Restart button clicked
+                # Sets the restart button value to false to basically reset the game.
+                # Also clears all the lists, since empty lists are neccesary to play again.
+                restartbuttonactive = False
+                activespots.clear()
+                activespotsx.clear()
+                activespotso.clear()
     # Loads the background.
     screen.fill((255, 255, 255))
     screen.blit(background, (196, 96))
     screen.convert_alpha()
+    # An if statement so the restart button is only loaded when a player has won / game isn't in progress.
+    # It also checks for who won, and with that prints the appropriate message of who won now in the GUI, not terminal.
+    if restartbuttonactive == True:
+
+        screen.blit(restartbutton, (50, 100))
+        if valueforwhowontext == True:
+            wontext = font.render('O is the winner!', True, (0, 0, 0))
+        else:
+            wontext = font.render('X is the winner!', True, (0, 0, 0))
+        screen.blit(wontext, (55, 60))
+
     # For each loaded spot...
     for spot in activespots:
         if spot <= 3:
@@ -147,10 +185,11 @@ while running:
         else:
             screen.blit(osymbol, (currentx, currenty))
     # This here is just a small optimization to only check if someone has won if the player has 3 or more spots covered.
-    if len(activespotsx) > 2:
-        checkifwon(activespotsx)
-    if len(activespotso) > 2:
-        checkifwon(activespotso)
+    if restartbuttonactive == False:
+        if len(activespotsx) > 2:
+            checkifwon(activespotsx)
+        if len(activespotso) > 2:
+            checkifwon(activespotso)
 
     # Final thing in game loop is always the line to update the display.
     pygame.display.update()
