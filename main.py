@@ -32,16 +32,28 @@ font = pygame.font.Font('freesansbold.ttf', 32)
 # It will also have an alternation symbol so new spots alternate between being an o or and x.
 alternationnum = 1
 
+global valueforwhowontext
+valueforwhowontext = []
 
 def addactivespot(spotnum):
     if spotnum not in activespots:
         activespots.append(spotnum)
         global alternationnum
+        global restartbuttonactive
+        global wontext
+
         if (alternationnum % 2) == 0:
             activespotso.append(spotnum)
         else:
             activespotsx.append(spotnum)
         alternationnum += 1
+        if len(activespotsx) > 2:
+            checkifwon(activespotsx)
+        if len(activespotso) > 2:
+            checkifwon(activespotso)
+        if len(activespots) == 9:
+            restartbuttonactive = True
+            valueforwhowontext.append('draw')
 
 
 # Big If/Elif checklist to check if a team has gotten 3 in a row.
@@ -72,11 +84,11 @@ def checkifwon(activechecklist):
 def someonewon(sidethatwon):
     global valueforwhowontext
     global restartbuttonactive
-
+    print('someone won!')
     if sidethatwon == activespotso:
-        valueforwhowontext = True
+        valueforwhowontext.append('o')
     else:
-        valueforwhowontext = False
+        valueforwhowontext.append('x')
 
     # This true statement activates the loading of the restart button, and the click checks for it.
     # It also cancels the click checks for the spots, so you can't just keep playing.
@@ -146,6 +158,7 @@ while running:
                     activespots.clear()
                     activespotsx.clear()
                     activespotso.clear()
+                    valueforwhowontext.clear()
     # Loads the background.
     screen.fill((255, 255, 255))
     screen.blit(background, (196, 96))
@@ -153,12 +166,14 @@ while running:
     # An if statement so the restart button is only loaded when a player has won / game isn't in progress.
     # It also checks for who won, and with that prints the appropriate message of who won now in the GUI, not terminal.
     if restartbuttonactive == True:
-
         screen.blit(restartbutton, (50, 100))
-        if valueforwhowontext == True:
+        print(valueforwhowontext[0])
+        if valueforwhowontext[0] == 'o':
             wontext = font.render('O is the winner!', True, (0, 0, 0))
-        else:
+        elif valueforwhowontext[0] == 'x':
             wontext = font.render('X is the winner!', True, (0, 0, 0))
+        elif valueforwhowontext[0] == 'draw':
+            wontext = font.render('Its a draw!', True, (0, 0, 0))
         screen.blit(wontext, (55, 60))
 
     # For each loaded spot...
@@ -184,12 +199,7 @@ while running:
             screen.blit(xsymbol, (currentx, currenty))
         else:
             screen.blit(osymbol, (currentx, currenty))
-    # This here is just a small optimization to only check if someone has won if the player has 3 or more spots covered.
-    if restartbuttonactive == False:
-        if len(activespotsx) > 2:
-            checkifwon(activespotsx)
-        if len(activespotso) > 2:
-            checkifwon(activespotso)
+
 
     # Final thing in game loop is always the line to update the display.
     pygame.display.update()
