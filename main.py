@@ -141,7 +141,7 @@ while running:
             else:
                 if 178 > posx > 50 and 180 > posy > 100:  # Restart button clicked
                     # Sets the restart button value to false to basically reset the game.
-                    # Also clears all the lists, since empty lists are neccesary to play again.
+                    # Also clears all the lists, since empty lists are necessary to play again.
                     restartbuttonactive = False
                     activespots.clear()
                     activespotsx.clear()
